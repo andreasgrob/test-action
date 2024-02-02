@@ -1,0 +1,25 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: action
+name: test-action
+description: 'Calculate length of a text'
+
+inputs:
+  text:
+    description: Text to calculate the length of.
+    required: true
+
+outputs:
+  length:
+    description: Length of the text.
+    value: ${{steps.length.outputs.length}}
+
+runs:
+  using: composite
+  steps:
+    - name: Calculate text length
+      id: length
+      uses: docker://alpine:3.19.1
+      run: |
+        echo "$TEXT" | wc -m > $CLOUDBEES_OUTPUTS/length
+      env:
+        TEXT: ${{ inputs.text }}
